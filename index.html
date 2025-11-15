@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>ExposureLab - Photography Exposure Toolkit</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="logo.png" rel="icon" type="image/x-icon"/>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, sans-serif; margin: 0; padding: 0; line-height: 1.6; color: #333; }
+    header { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    header h1 { margin: 0; font-size: 20px; display: flex; align-items: center; }
+    header h1 span { font-size: 24px; margin-right: 10px; }
+    nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: 600; transition: opacity 0.3s; }
+    nav a:hover { opacity: 0.8; text-decoration: underline; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    h2 { color: #222; font-size: 2em; margin-bottom: 20px; }
+    h3 { color: #1f2937; margin-top: 30px; font-size: 1.4em; }
+    ul { margin-left: 20px; line-height: 2; }
+    ul li { margin-bottom: 8px; }
+    a.button { display: inline-block; padding: 12px 30px; margin: 20px 0; background: linear-gradient(135deg, #1f2937 0%, #111827 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 15px rgba(31, 41, 55, 0.4); transition: transform 0.3s, box-shadow 0.3s; }
+    a.button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(31, 41, 55, 0.6); }
+    .hidden { display: none; }
+    footer { text-align: center; padding: 20px; font-size: 0.9em; color: #555; border-top: 1px solid #ccc; margin-top: 40px; }
+    select { padding: 8px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white; font-weight: 600; cursor: pointer; }
+    select option { color: #333; }
+    .faq-item { margin-bottom: 25px; background: #f3f4f6; padding: 20px; border-radius: 8px; border-left: 4px solid #1f2937; }
+    .faq-item strong { color: #111827; font-size: 1.1em; display: block; margin-bottom: 10px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+    .feature-card { background: #f3f4f6; padding: 20px; border-radius: 10px; border: 2px solid #e5e7eb; }
+    .feature-card h4 { color: #111827; margin-top: 0; }
+    .note { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 5px; }
+    .note strong { color: #92400e; }
+    .highlight-box { background: #f3f4f6; border-left: 4px solid #1f2937; padding: 20px; margin: 25px 0; border-radius: 8px; }
+    .highlight-box strong { color: #111827; font-size: 1.1em; }
+    .pro-badge { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-left: 8px; }
+    .tool-badge { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 3px 10px; border-radius: 8px; font-size: 0.8em; font-weight: 600; display: inline-block; margin-left: 6px; }
+  </style>
+<script>
+  function switchLanguage(lang) {
+    document.querySelectorAll('.lang').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.lang-' + lang).forEach(el => el.classList.remove('hidden'));
+    document.getElementById('lang-selector').value = lang;
+  }
+
+  function showSection(section) {
+    document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
+    const target = document.getElementById(section);
+    if (target) target.classList.remove('hidden');
+  }
+
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  window.onload = function() {
+    const hash = window.location.hash.substring(1);
+    const lang = getQueryParam('lang');
+
+    if (hash === 'privacy') showSection('privacy');
+    else if (hash === 'support') showSection('support');
+    else showSection('home');
+    
+    switchLanguage(lang === 'de' || lang === 'es' ? lang : 'en');
+  }
+</script>
+</head>
+<body>
+<header>
+<h1>
+<span>📸</span>
+      ExposureLab
+    </h1>
+<nav>
+<a href="#home" onclick="showSection('home')">Home</a>
+<a href="#support" onclick="showSection('support')">Support</a>
+<a href="#privacy" onclick="showSection('privacy')">Privacy Policy</a>
+</nav>
+<div>
+<select id="lang-selector" onchange="switchLanguage(this.value)">
+<option selected="" value="en">English</option>
+<option value="de">Deutsch</option>
+<option value="es">Español</option>
+</select>
+</div>
+</header>
+<div class="container">
+<!-- HOME SECTION -->
+<div class="section" id="home">
+<!-- English -->
+<div class="lang lang-en">
+<h2>ExposureLab - Professional Photography Exposure Toolkit</h2>
+<p>The ultimate exposure calculator toolkit for photographers. Master long exposures, ND filters, film reciprocity, astrophotography, and more. Designed for both field work and studio use with special Night Mode for preserving night vision.</p>
+
+<div class="highlight-box">
+<strong>🔒 Fully Offline • Complete Privacy</strong>
+<p>ExposureLab works completely offline with no internet connection required. Your settings, presets, and data stay 100% private and secure on your device. No login, no account, no cloud sync - complete control over your data.</p>
+</div>
+
+<h3>Core Photography Tools</h3>
+<div class="feature-grid">
+<div class="feature-card">
+<h4>🌄 ND Filter Calculator <span class="tool-badge">FREE</span></h4>
+<p>Calculate adjusted shutter speeds for ND filter stacks. Stack multiple filters (ND8, ND64, ND1000, etc.) and get instant calculations. Save your favorite filter combinations as presets.</p>
+</div>
+
+<div class="feature-card">
+<h4>⏱️ Bulb Timer <span class="tool-badge">FREE</span></h4>
+<p>Precision countdown timer for long exposures. Vibration and sound alerts, screen wake option, and optimized Night Mode for dark environments. Perfect for bulb mode photography.</p>
+</div>
+
+<div class="feature-card">
+<h4>⚖️ Exposure Converter <span class="tool-badge">FREE</span></h4>
+<p>Calculate equivalent exposures maintaining the same exposure value (EV). Change aperture, shutter speed, or ISO and instantly see equivalent settings. Essential for creative control.</p>
+</div>
+
+<div class="feature-card">
+<h4>🎞️ Film Reciprocity Calculator <span class="tool-badge">FREE</span></h4>
+<p>Accurate reciprocity failure corrections for popular film stocks including Kodak Portra, Ilford HP5, Ilford Delta, Fuji Acros, and more. Get corrected exposure times for long exposures.</p>
+</div>
+
+<div class="feature-card">
+<h4>🌌 Astrophotography Calculator <span class="tool-badge">FREE</span></h4>
+<p>Calculate maximum shutter speed to avoid star trails using the 250 Rule and 300 Rule. Optimized for modern high-resolution sensors. Includes NPF Rule calculator with adjustable K-factor for pinpoint star accuracy.</p>
+</div>
+
+<div class="feature-card">
+<h4>💾 Presets Manager <span class="tool-badge">FREE</span></h4>
+<p>Save and organize your favorite filter stacks, timer settings, and exposure combinations. Quick access to frequently used configurations in the field.</p>
+</div>
+</div>
+
+<h3>Free vs Pro Features</h3>
+<p>ExposureLab offers all core calculation tools for free. Upgrade to <strong>ExposureLab Pro</strong> (one-time purchase) to unlock advanced features and remove limits.</p>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h4>✅ FREE FEATURES</h4>
+<ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+<li>All 5 core calculation tools</li>
+<li>ND Filter Calculator with stacking</li>
+<li>Bulb Timer with haptics</li>
+<li>Exposure Converter</li>
+<li>Film Reciprocity Calculator</li>
+<li>Astrophotography Calculator (250/300/NPF Rules)</li>
+<li>Up to 5 saved presets</li>
+<li>Night Mode for low-light use</li>
+<li>Works completely offline</li>
+<li>No login required</li>
+</ul>
+</div>
+
+<div class="feature-card" style="border: 2px solid #f59e0b;">
+<h4>👑 PRO FEATURES <span class="pro-badge">PRO</span></h4>
+<ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+<li><strong>Unlimited Presets</strong> - Save as many filter stacks and settings as you need</li>
+<li><strong>Advanced Film Database</strong> - Extended film stock library with custom curves</li>
+<li><strong>Export/Import Settings</strong> - Backup and restore your presets</li>
+<li><strong>Priority Support</strong> - Direct email support</li>
+</ul>
+<p style="margin-top: 15px; font-size: 0.9em; color: #666;"><strong>One-time purchase • Lifetime access</strong></p>
+</div>
+</div>
+
+<h3>Why Choose ExposureLab?</h3>
+<div class="feature-grid">
+<div class="feature-card">
+<h4>🔴 Works Offline</h4>
+<p>No internet required. All calculations happen on-device for instant results in any location.</p>
+</div>
+<div class="feature-card">
+<h4>🌙 Night Mode</h4>
+<p>Special ultra-dark interface with red/low-blue colors to preserve night vision during astrophotography and night shoots.</p>
+</div>
+<div class="feature-card">
+<h4>📱 iPhone & iPad Optimized</h4>
+<p>Beautiful adaptive layouts designed specifically for both iPhone and iPad with full multitasking support.</p>
+</div>
+<div class="feature-card">
+<h4>⚡ Fast & Accurate</h4>
+<p>Instant real-time calculations with professional-grade accuracy. No waiting, no connectivity issues.</p>
+</div>
+<div class="feature-card">
+<h4>🎯 Field-Tested</h4>
+<p>Built by photographers, for photographers. Every tool is designed for real-world shooting scenarios.</p>
+</div>
+<div class="feature-card">
+<h4>💎 Fair Pricing</h4>
+<p>Core tools free forever. One-time Pro purchase with no subscription or recurring fees.</p>
+</div>
+</div>
+
+<h3>Perfect For:</h3>
+<ul>
+<li><strong>Landscape Photographers</strong> - ND filter calculations and long exposure timing</li>
+<li><strong>Astrophotographers</strong> - Star trail prevention and NPF calculations</li>
+<li><strong>Film Photographers</strong> - Reciprocity failure corrections for various film stocks</li>
+<li><strong>Long Exposure Artists</strong> - Precise timing and exposure equivalents</li>
+<li><strong>Photography Students</strong> - Learn exposure relationships hands-on</li>
+</ul>
+
+<a class="button" href="https://apps.apple.com/app/exposurelab/id6755327384">Download on the App Store</a>
+</div>
+
+<!-- German -->
+<div class="lang lang-de hidden">
+<h2>ExposureLab - Professionelles Belichtungs-Toolkit für Fotografen</h2>
+<p>Das ultimative Belichtungsrechner-Toolkit für Fotografen. Meistern Sie Langzeitbelichtungen, ND-Filter, Film-Reziprozität, Astrofotografie und mehr. Entwickelt für Außenaufnahmen und Studioarbeit mit speziellem Nachtmodus zur Erhaltung der Nachtsicht.</p>
+
+<div class="highlight-box">
+<strong>🔒 Vollständig Offline • Maximale Privatsphäre</strong>
+<p>ExposureLab funktioniert vollständig offline, ohne Internetverbindung. Ihre Einstellungen, Voreinstellungen und Daten bleiben zu 100 % privat und sicher auf Ihrem Gerät. Keine Anmeldung, kein Konto, keine Cloud-Synchronisierung – volle Kontrolle über Ihre Daten.</p>
+</div>
+
+<h3>Kernfunktionen für Fotografie</h3>
+<div class="feature-grid">
+<div class="feature-card">
+<h4>🌄 ND-Filterrechner <span class="tool-badge">GRATIS</span></h4>
+<p>Berechnen Sie angepasste Verschlusszeiten für ND-Filter-Stacks. Stapeln Sie mehrere Filter (ND8, ND64, ND1000 usw.) und erhalten Sie sofortige Berechnungen. Speichern Sie Ihre Lieblingsfilterkombinationen als Voreinstellungen.</p>
+</div>
+
+<div class="feature-card">
+<h4>⏱️ Bulb-Timer <span class="tool-badge">GRATIS</span></h4>
+<p>Präzisions-Countdown-Timer für Langzeitbelichtungen. Vibrations- und Klangalarme, Bildschirm-Wach-Option und optimierter Nachtmodus für dunkle Umgebungen. Perfekt für Bulb-Modus-Fotografie.</p>
+</div>
+
+<div class="feature-card">
+<h4>⚖️ Belichtungskonverter <span class="tool-badge">GRATIS</span></h4>
+<p>Berechnen Sie äquivalente Belichtungen bei gleichbleibendem Belichtungswert (EV). Ändern Sie Blende, Verschlusszeit oder ISO und sehen Sie sofort äquivalente Einstellungen. Unverzichtbar für kreative Kontrolle.</p>
+</div>
+
+<div class="feature-card">
+<h4>🎞️ Film-Reziprozitätsrechner <span class="tool-badge">GRATIS</span></h4>
+<p>Präzise Reziprozitätsfehler-Korrekturen für beliebte Filmtypen wie Kodak Portra, Ilford HP5, Ilford Delta, Fuji Acros und mehr. Erhalten Sie korrigierte Belichtungszeiten für Langzeitbelichtungen.</p>
+</div>
+
+<div class="feature-card">
+<h4>🌌 Astrofotografie-Rechner <span class="tool-badge">GRATIS</span></h4>
+<p>Berechnen Sie die maximale Verschlusszeit zur Vermeidung von Sternspuren mit der 250er- und 300er-Regel. Optimiert für moderne hochauflösende Sensoren. Beinhaltet NPF-Regelrechner mit einstellbarem K-Faktor für punktgenaue Sterngenauigkeit.</p>
+</div>
+
+<div class="feature-card">
+<h4>💾 Voreinstellungs-Manager <span class="tool-badge">GRATIS</span></h4>
+<p>Speichern und organisieren Sie Ihre bevorzugten Filter-Stacks, Timer-Einstellungen und Belichtungskombinationen. Schnellzugriff auf häufig verwendete Konfigurationen im Feld.</p>
+</div>
+</div>
+
+<h3>Kostenlose vs. Pro-Funktionen</h3>
+<p>ExposureLab bietet alle Kernberechnungs-Tools kostenlos. Upgraden Sie auf <strong>ExposureLab Pro</strong> (einmaliger Kauf) für erweiterte Funktionen ohne Limits.</p>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h4>✅ KOSTENLOSE FUNKTIONEN</h4>
+<ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+<li>Alle 5 Kernberechnungs-Tools</li>
+<li>ND-Filterrechner mit Stapelung</li>
+<li>Bulb-Timer mit Haptik</li>
+<li>Belichtungskonverter</li>
+<li>Film-Reziprozitätsrechner</li>
+<li>Astrofotografie-Rechner (250/300/NPF-Regeln)</li>
+<li>Bis zu 5 gespeicherte Voreinstellungen</li>
+<li>Nachtmodus für Schwachlicht-Nutzung</li>
+<li>Funktioniert vollständig offline</li>
+<li>Keine Anmeldung erforderlich</li>
+</ul>
+</div>
+
+<div class="feature-card" style="border: 2px solid #f59e0b;">
+<h4>👑 PRO-FUNKTIONEN <span class="pro-badge">PRO</span></h4>
+<ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+<li><strong>Unbegrenzte Voreinstellungen</strong> - Speichern Sie so viele Filter-Stacks und Einstellungen wie nötig</li>
+<li><strong>Erweiterte Film-Datenbank</strong> - Erweitertes Filmbestandsbibliothek mit benutzerdefinierten Kurven</li>
+<li><strong>Export/Import von Einstellungen</strong> - Sichern und Wiederherstellen Ihrer Voreinstellungen</li>
+<li><strong>Prioritäts-Support</strong> - Direkter E-Mail-Support</li>
+</ul>
+<p style="margin-top: 15px; font-size: 0.9em; color: #666;"><strong>Einmaliger Kauf • Lebenslanger Zugriff</strong></p>
+</div>
+</div>
+
+<h3>Warum ExposureLab wählen?</h3>
+<div class="feature-grid">
+<div class="feature-card"><h4>🔴 Offline-Funktion</h4><p>Kein Internet erforderlich. Alle Berechnungen erfolgen auf dem Gerät für sofortige Ergebnisse an jedem Ort.</p></div>
+<div class="feature-card"><h4>🌙 Nachtmodus</h4><p>Spezielle ultra-dunkle Oberfläche mit rot/blauarm-Farben zum Erhalt der Nachtsicht während Astrofotografie und Nachtaufnahmen.</p></div>
+<div class="feature-card"><h4>📱 Für iPhone & iPad optimiert</h4><p>Schöne adaptive Layouts speziell für iPhone und iPad mit voller Multitasking-Unterstützung.</p></div>
+<div class="feature-card"><h4>⚡ Schnell & Präzise</h4><p>Sofortige Echtzeit-Berechnungen mit professioneller Genauigkeit. Kein Warten, keine Konnektivitätsprobleme.</p></div>
+<div class="feature-card"><h4>🎯 Feldgetestet</h4><p>Von Fotografen für Fotografen entwickelt. Jedes Tool ist für reale Aufnahmeszenarien konzipiert.</p></div>
+<div class="feature-card"><h4>💎 Faire Preise</h4><p>Kern-Tools kostenlos für immer. Einmaliger Pro-Kauf ohne Abonnement oder wiederkehrende Gebühren.</p></div>
+</div>
+
+<h3>Perfekt für:</h3>
+<ul>
+<li><strong>Landschaftsfotografen</strong> - ND-Filterberechnungen und Langzeitbelichtungs-Timing</li>
+<li><strong>Astrofotografen</strong> - Sternspurenvermeidung und NPF-Berechnungen</li>
+<li><strong>Filmfotografen</strong> - Reziprozitätsfehler-Korrekturen für verschiedene Filmtypen</li>
+<li><strong>Langzeitbelichtungs-Künstler</strong> - Präzises Timing und Belichtungsäquivalente</li>
+<li><strong>Fotografie-Studenten</strong> - Belichtungsbeziehungen praktisch erlernen</li>
+</ul>
+
+<a class="button" href="https://apps.apple.com/app/exposurelab/id6755327384">Im App Store herunterladen</a>
+</div>
+
+<!-- Spanish -->
+<div class="lang lang-es hidden">
+<h2>ExposureLab - Kit de Herramientas Profesional para Exposición Fotográfica</h2>
+<p>El kit definitivo de calculadoras de exposición para fotógrafos. Domina exposiciones largas, filtros ND, reciprocidad de película, astrofotografía y más. Diseñado para trabajo de campo y estudio con Modo Nocturno especial para preservar la visión nocturna.</p>
+
+<div class="highlight-box">
+<strong>🔒 Totalmente sin conexión • Privacidad completa</strong>
+<p>ExposureLab funciona completamente sin conexión, sin necesidad de Internet. Tus configuraciones, preajustes y datos permanecen 100% privados y seguros en tu dispositivo. Sin inicio de sesión, sin cuenta, sin sincronización en la nube: control total sobre tus datos.</p>
+</div>
+
+<h3>Herramientas Principales de Fotografía</h3>
+<div class="feature-grid">
+<div class="feature-card">
+<h4>🌄 Calculadora de Filtros ND <span class="tool-badge">GRATIS</span></h4>
+<p>Calcula velocidades de obturación ajustadas para apilamientos de filtros ND. Apila múltiples filtros (ND8, ND64, ND1000, etc.) y obtén cálculos instantáneos. Guarda tus combinaciones de filtros favoritas como preajustes.</p>
+</div>
+
+<div class="feature-card">
+<h4>⏱️ Temporizador Bulb <span class="tool-badge">GRATIS</span></h4>
+<p>Temporizador de cuenta regresiva de precisión para exposiciones largas. Alertas de vibración y sonido, opción de pantalla activa y Modo Nocturno optimizado para ambientes oscuros. Perfecto para fotografía en modo bulb.</p>
+</div>
+
+<div class="feature-card">
+<h4>⚖️ Conversor de Exposición <span class="tool-badge">GRATIS</span></h4>
+<p>Calcula exposiciones equivalentes manteniendo el mismo valor de exposición (EV). Cambia apertura, velocidad de obturación o ISO y ve instantáneamente configuraciones equivalentes. Esencial para control creativo.</p>
+</div>
+
+<div class="feature-card">
+<h4>🎞️ Calculadora de Reciprocidad de Película <span class="tool-badge">GRATIS</span></h4>
+<p>Correcciones precisas de fallo de reciprocidad para películas populares incluyendo Kodak Portra, Ilford HP5, Ilford Delta, Fuji Acros y más. Obtén tiempos de exposición corregidos para exposiciones largas.</p>
+</div>
+
+<div class="feature-card">
+<h4>🌌 Calculadora de Astrofotografía <span class="tool-badge">GRATIS</span></h4>
+<p>Calcula la velocidad máxima de obturación para evitar rastros de estrellas usando la Regla 250 y la Regla 300. Optimizado para sensores modernos de alta resolución. Incluye calculadora de Regla NPF con factor K ajustable para precisión estelar puntual.</p>
+</div>
+
+<div class="feature-card">
+<h4>💾 Gestor de Preajustes <span class="tool-badge">GRATIS</span></h4>
+<p>Guarda y organiza tus apilamientos de filtros, configuraciones de temporizador y combinaciones de exposición favoritas. Acceso rápido a configuraciones utilizadas frecuentemente en el campo.</p>
+</div>
+</div>
+
+<h3>Funciones Gratuitas vs Pro</h3>
+<p>ExposureLab ofrece todas las herramientas de cálculo principales gratis. Actualiza a <strong>ExposureLab Pro</strong> (compra única) para desbloquear funciones avanzadas y eliminar límites.</p>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h4>✅ FUNCIONES GRATUITAS</h4>
+<ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+<li>Las 5 herramientas de cálculo principales</li>
+<li>Calculadora de Filtros ND con apilamiento</li>
+<li>Temporizador Bulb con háptica</li>
+<li>Conversor de Exposición</li>
+<li>Calculadora de Reciprocidad de Película</li>
+<li>Calculadora de Astrofotografía (Reglas 250/300/NPF)</li>
+<li>Hasta 5 preajustes guardados</li>
+<li>Modo Nocturno para uso con poca luz</li>
+<li>Funciona completamente sin conexión</li>
+<li>Sin necesidad de inicio de sesión</li>
+</ul>
+</div>
+
+<div class="feature-card" style="border: 2px solid #f59e0b;">
+<h4>👑 FUNCIONES PRO <span class="pro-badge">PRO</span></h4>
+<ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+<li><strong>Preajustes Ilimitados</strong> - Guarda tantos apilamientos de filtros y configuraciones como necesites</li>
+<li><strong>Base de Datos de Películas Avanzada</strong> - Biblioteca extendida de tipos de película con curvas personalizadas</li>
+<li><strong>Exportar/Importar Configuraciones</strong> - Respalda y restaura tus preajustes</li>
+<li><strong>Soporte Prioritario</strong> - Soporte directo por correo electrónico</li>
+</ul>
+<p style="margin-top: 15px; font-size: 0.9em; color: #666;"><strong>Compra única • Acceso de por vida</strong></p>
+</div>
+</div>
+
+<h3>¿Por qué elegir ExposureLab?</h3>
+<div class="feature-grid">
+<div class="feature-card"><h4>🔴 Funciona sin conexión</h4><p>No requiere Internet. Todos los cálculos ocurren en el dispositivo para resultados instantáneos en cualquier ubicación.</p></div>
+<div class="feature-card"><h4>🌙 Modo Nocturno</h4><p>Interfaz especial ultra-oscura con colores rojos/bajo-azul para preservar la visión nocturna durante astrofotografía y sesiones nocturnas.</p></div>
+<div class="feature-card"><h4>📱 Optimizado para iPhone e iPad</h4><p>Hermosos diseños adaptativos diseñados específicamente para iPhone e iPad con soporte completo de multitarea.</p></div>
+<div class="feature-card"><h4>⚡ Rápido y Preciso</h4><p>Cálculos instantáneos en tiempo real con precisión de nivel profesional. Sin esperas, sin problemas de conectividad.</p></div>
+<div class="feature-card"><h4>🎯 Probado en Campo</h4><p>Construido por fotógrafos, para fotógrafos. Cada herramienta está diseñada para escenarios de toma reales.</p></div>
+<div class="feature-card"><h4>💎 Precio Justo</h4><p>Herramientas principales gratis para siempre. Compra Pro única sin suscripción ni tarifas recurrentes.</p></div>
+</div>
+
+<h3>Perfecto para:</h3>
+<ul>
+<li><strong>Fotógrafos de Paisajes</strong> - Cálculos de filtros ND y temporización de exposiciones largas</li>
+<li><strong>Astrofotógrafos</strong> - Prevención de rastros de estrellas y cálculos NPF</li>
+<li><strong>Fotógrafos de Película</strong> - Correcciones de fallo de reciprocidad para varios tipos de película</li>
+<li><strong>Artistas de Exposición Larga</strong> - Temporización precisa y equivalentes de exposición</li>
+<li><strong>Estudiantes de Fotografía</strong> - Aprender relaciones de exposición prácticamente</li>
+</ul>
+
+<a class="button" href="https://apps.apple.com/app/exposurelab/id6755327384">Descargar en el App Store</a>
+</div>
+</div>
+
+<!-- SUPPORT SECTION -->
+<div class="section hidden" id="support">
+<!-- English Support -->
+<div class="lang lang-en">
+<h2>Support & Help</h2>
+<p>Need help with ExposureLab? We're here to assist you.</p>
+
+<h3>Contact</h3>
+<p>Email: <a href="mailto:bandurria.apps@gmail.com">bandurria.apps@gmail.com</a></p>
+<p>We typically respond within 24-48 hours.</p>
+
+<h3>ExposureLab Pro</h3>
+<div class="faq-item">
+<strong>What's included in ExposureLab Pro?</strong>
+<p>ExposureLab Pro is a one-time purchase that unlocks advanced features:</p>
+<ul>
+<li><strong>Unlimited Presets:</strong> Save as many filter stacks, timer presets, and exposure combinations as you need</li>
+<li><strong>Advanced Film Database:</strong> Extended library of film stocks with custom reciprocity curves</li>
+<li><strong>Export/Import Settings:</strong> Backup and restore all your presets and configurations</li>
+<li><strong>Priority Support:</strong> Direct email support with faster response times</li>
+</ul>
+</div>
+
+<div class="faq-item">
+<strong>How much does ExposureLab Pro cost?</strong>
+<p>ExposureLab Pro is a <strong>one-time purchase</strong> with lifetime access. No subscription, no recurring fees. The price varies by region and is displayed in your local currency in the App Store.</p>
+</div>
+
+<div class="faq-item">
+<strong>Can I try Pro features before buying?</strong>
+<p>The free version includes up to 5 presets so you can experience the preset system. When you reach the 5-preset limit, you'll see what Pro offers before purchasing.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I restore my purchase on a new device?</strong>
+<p>Open ExposureLab on your new device, attempt to save more than 5 presets or access a Pro feature, then tap "Restore Purchase" on the paywall screen. Your purchase is tied to your Apple ID and can be restored on any device.</p>
+</div>
+
+<h3>Frequently Asked Questions</h3>
+
+<div class="faq-item">
+<strong>How do I use the ND Filter Calculator?</strong>
+<p>1) Enter your base shutter speed (the speed without filters), 2) Tap "Add Filter" and select from common ND filters (ND8, ND64, ND1000, etc.) or enter custom stop values, 3) Stack multiple filters by adding more, 4) View the calculated new shutter speed instantly, 5) Optionally tap "Start Timer" to begin a countdown with that duration.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I save a preset?</strong>
+<p>In any calculator tool (ND Filter, Timer, Reciprocity), configure your settings, then tap the "Save as Preset" button. Give it a descriptive name like "ND64+ND8 Landscape" or "Portra 400 5min". Free users can save up to 5 presets; Pro users have unlimited presets.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I use saved presets?</strong>
+<p>Tap the "Presets" section in the Home screen or use the preset button (bookmark icon) in individual tools. Your saved presets appear in a list - tap any preset to instantly load those settings into the calculator.</p>
+</div>
+
+<div class="faq-item">
+<strong>What is Night Mode and how do I enable it?</strong>
+<p>Night Mode is a special ultra-dark interface with red/low-blue colors designed to preserve your night vision during astrophotography and night shooting. Toggle Night Mode on/off using the moon icon in the Home screen header. The setting persists across app launches.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I use the Bulb Timer?</strong>
+<p>1) Enter your desired exposure time or load a preset, 2) Tap "Start" to begin the countdown, 3) The timer shows large, easy-to-read digits, 4) Toggle "Keep Screen Awake" to prevent your device from sleeping, 5) When time expires, you'll get a vibration and/or sound alert (configurable in settings).</p>
+</div>
+
+<div class="faq-item">
+<strong>How does the Exposure Converter work?</strong>
+<p>The Exposure Converter maintains the same exposure value (EV) while changing settings. Set your current aperture, shutter speed, and ISO. Then adjust any value - the others automatically recalculate to maintain equivalent exposure. Perfect for understanding exposure relationships or adapting to different shooting constraints.</p>
+</div>
+
+<div class="faq-item">
+<strong>Which film stocks are supported in the Reciprocity Calculator?</strong>
+<p>The free version includes popular film stocks: Kodak Portra 160/400/800, Kodak Ektar 100, Ilford HP5 Plus, Ilford Delta 100/400/3200, Ilford FP4 Plus, Fuji Acros 100, and more. Pro users get access to an extended database with additional film stocks and custom curve adjustments.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I use the Film Reciprocity Calculator?</strong>
+<p>1) Select your film stock from the database, 2) Enter your meter-indicated exposure time, 3) View the corrected exposure time accounting for reciprocity failure, 4) Optionally tap "Start Timer" to time the corrected exposure, 5) Save frequently-used film/time combinations as presets.</p>
+</div>
+
+<div class="faq-item">
+<strong>What are the 250 Rule, 300 Rule, and NPF Rule?</strong>
+<p>These are methods to calculate maximum shutter speed for astrophotography before stars start trailing:</p>
+<ul>
+<li><strong>250 Rule:</strong> 250 ÷ focal length = max seconds. Optimized for modern high-resolution cameras (24MP+)</li>
+<li><strong>300 Rule:</strong> 300 ÷ focal length = max seconds. Traditional rule, more conservative</li>
+<li><strong>NPF Rule:</strong> Advanced formula considering pixel pitch, aperture, and declination for pinpoint star accuracy with adjustable K-factor (default: K=20 conservative)</li>
+</ul>
+</div>
+
+<div class="faq-item">
+<strong>How do I use the Astrophotography Calculator?</strong>
+<p>1) Select your rule type (250, 300, or NPF), 2) Enter your lens focal length, 3) For NPF: also enter aperture, camera megapixels, and optionally adjust K-factor and declination, 4) View the calculated maximum shutter speed, 5) Tap "Start Timer" to time your exposure, 6) Save your camera/lens combinations as presets for quick access.</p>
+</div>
+
+<div class="faq-item">
+<strong>Why can't I save more than 5 presets?</strong>
+<p>The free version is limited to 5 presets to keep the app sustainable while offering all core calculation tools for free. Upgrade to ExposureLab Pro for unlimited presets, perfect for photographers with multiple camera bodies, lens sets, or frequent shooting scenarios.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I export my presets? <span class="pro-badge">PRO</span></strong>
+<p>With ExposureLab Pro, go to Settings → Export/Import. Tap "Export Presets" to create a backup file of all your saved presets including filter stacks, timer settings, film profiles, and astro configurations. The export file can be shared across devices.</p>
+</div>
+
+<div class="faq-item">
+<strong>How do I import presets? <span class="pro-badge">PRO</span></strong>
+<p>With ExposureLab Pro, go to Settings → Export/Import and tap "Import Presets". Select your previously exported file. The importer automatically detects duplicates and merges settings safely.</p>
+</div>
+
+<div class="faq-item">
+<strong>Does ExposureLab work offline?</strong>
+<p>Yes! ExposureLab works completely offline with no internet connection required. All calculations happen on-device. This makes it reliable in remote locations without cellular or WiFi coverage.</p>
+</div>
+
+<div class="faq-item">
+<strong>Is my data stored in the cloud?</strong>
+<p>No. All your data is stored locally on your device. ExposureLab doesn't sync to any cloud service, which means your settings and presets stay completely private and secure on your device. You control your data through manual exports (Pro feature).</p>
+</div>
+
+<div class="faq-item">
+<strong>Can I use ExposureLab on both iPhone and iPad?</strong>
+<p>Yes! ExposureLab is a universal app optimized for both iPhone and iPad with adaptive layouts. Your purchase covers both device types, and your presets sync via iCloud if enabled in device settings.</p>
+</div>
+
+<h3>Tips & Best Practices</h3>
+<ul>
+<li>Use descriptive names for presets like "Landscape ND1000+ND8" instead of "Preset 1"</li>
+<li>Enable Night Mode before heading out for night photography to preserve night vision</li>
+<li>Save common filter combinations as presets for quick access in the field</li>
+<li>For astrophotography, start with the 250 Rule for modern cameras, then fine-tune with NPF</li>
+<li>Use "Keep Screen Awake" during long exposures to monitor timer progress</li>
+<li>Experiment with the Exposure Converter to understand exposure relationships</li>
+<li>Back up your presets regularly using Export (Pro feature)</li>
+</ul>
+
+<h3>System Requirements</h3>
+<ul>
+<li>iOS 15.0 or later</li>
+<li>iPhone or iPad</li>
+<li>No internet connection required</li>
+<li>Works completely offline</li>
+</ul>
+</div>
+
+<!-- German Support -->
+<div class="lang lang-de hidden">
+<h2>Support & Hilfe</h2>
+<p>Benötigen Sie Hilfe mit ExposureLab? Wir sind für Sie da.</p>
+
+<h3>Kontakt</h3>
+<p>E-Mail: <a href="mailto:bandurria.apps@gmail.com">bandurria.apps@gmail.com</a></p>
+<p>Wir antworten normalerweise innerhalb von 24-48 Stunden.</p>
+
+<h3>ExposureLab Pro</h3>
+<div class="faq-item">
+<strong>Was ist in ExposureLab Pro enthalten?</strong>
+<p>ExposureLab Pro ist ein einmaliger Kauf, der erweiterte Funktionen freischaltet:</p>
+<ul>
+<li><strong>Unbegrenzte Voreinstellungen:</strong> Speichern Sie so viele Filter-Stacks, Timer-Voreinstellungen und Belichtungskombinationen wie nötig</li>
+<li><strong>Erweiterte Film-Datenbank:</strong> Erweiterte Bibliothek mit Filmtypen und benutzerdefinierten Reziprozitätskurven</li>
+<li><strong>Export/Import von Einstellungen:</strong> Sichern und Wiederherstellen aller Voreinstellungen und Konfigurationen</li>
+<li><strong>Prioritäts-Support:</strong> Direkter E-Mail-Support mit schnelleren Antwortzeiten</li>
+</ul>
+</div>
+
+<div class="faq-item">
+<strong>Was kostet ExposureLab Pro?</strong>
+<p>ExposureLab Pro ist ein <strong>einmaliger Kauf</strong> mit lebenslangem Zugriff. Kein Abonnement, keine wiederkehrenden Gebühren.</p>
+</div>
+
+<div class="faq-item">
+<strong>Wie stelle ich meinen Kauf auf einem neuen Gerät wieder her?</strong>
+<p>Öffnen Sie ExposureLab auf Ihrem neuen Gerät, versuchen Sie mehr als 5 Voreinstellungen zu speichern, und tippen Sie dann auf „Kauf wiederherstellen". Ihr Kauf ist mit Ihrer Apple-ID verknüpft.</p>
+</div>
+
+<h3>Häufig gestellte Fragen</h3>
+<div class="faq-item"><strong>Wie verwende ich den ND-Filterrechner?</strong><p>1) Geben Sie Ihre Basis-Verschlusszeit ein, 2) Tippen Sie auf „Filter hinzufügen" und wählen Sie gängige ND-Filter aus, 3) Stapeln Sie mehrere Filter, 4) Sehen Sie die berechnete neue Verschlusszeit sofort, 5) Tippen Sie optional auf „Timer starten".</p></div>
+<div class="faq-item"><strong>Wie speichere ich eine Voreinstellung?</strong><p>Konfigurieren Sie in einem Rechner-Tool Ihre Einstellungen und tippen Sie dann auf „Als Voreinstellung speichern". Geben Sie einen beschreibenden Namen an. Kostenlose Benutzer können bis zu 5 Voreinstellungen speichern; Pro-Benutzer haben unbegrenzte Voreinstellungen.</p></div>
+<div class="faq-item"><strong>Was ist der Nachtmodus und wie aktiviere ich ihn?</strong><p>Der Nachtmodus ist eine spezielle ultra-dunkle Oberfläche mit roten/blauarmen Farben zum Erhalt Ihrer Nachtsicht. Schalten Sie den Nachtmodus mit dem Mondsymbol im Startbildschirm-Header ein/aus.</p></div>
+<div class="faq-item"><strong>Wie funktioniert der Belichtungskonverter?</strong><p>Der Belichtungskonverter behält denselben Belichtungswert (EV) bei, während Einstellungen geändert werden. Stellen Sie Blende, Verschlusszeit und ISO ein. Passen Sie dann einen Wert an - die anderen berechnen sich automatisch neu, um die äquivalente Belichtung beizubehalten.</p></div>
+<div class="faq-item"><strong>Funktioniert ExposureLab offline?</strong><p>Ja! ExposureLab funktioniert vollständig offline ohne Internetverbindung. Alle Berechnungen erfolgen auf dem Gerät.</p></div>
+
+<h3>Systemanforderungen</h3>
+<ul><li>iOS 15.0 oder neuer</li><li>iPhone oder iPad</li><li>Keine Internetverbindung erforderlich</li></ul>
+</div>
+
+<!-- Spanish Support -->
+<div class="lang lang-es hidden">
+<h2>Soporte y Ayuda</h2>
+<p>¿Necesitas ayuda con ExposureLab? Estamos aquí para asistirte.</p>
+
+<h3>Contacto</h3>
+<p>Email: <a href="mailto:bandurria.apps@gmail.com">bandurria.apps@gmail.com</a></p>
+<p>Normalmente respondemos dentro de 24-48 horas.</p>
+
+<h3>ExposureLab Pro</h3>
+<div class="faq-item">
+<strong>¿Qué incluye ExposureLab Pro?</strong>
+<p>ExposureLab Pro es una compra única que desbloquea funciones avanzadas:</p>
+<ul>
+<li><strong>Preajustes Ilimitados:</strong> Guarda tantos apilamientos de filtros, preajustes de temporizador y combinaciones de exposición como necesites</li>
+<li><strong>Base de Datos de Películas Avanzada:</strong> Biblioteca extendida de tipos de película con curvas de reciprocidad personalizadas</li>
+<li><strong>Exportar/Importar Configuraciones:</strong> Respalda y restaura todos tus preajustes y configuraciones</li>
+<li><strong>Soporte Prioritario:</strong> Soporte directo por correo electrónico con tiempos de respuesta más rápidos</li>
+</ul>
+</div>
+
+<div class="faq-item">
+<strong>¿Cuánto cuesta ExposureLab Pro?</strong>
+<p>ExposureLab Pro es una <strong>compra única</strong> con acceso de por vida. Sin suscripción, sin tarifas recurrentes.</p>
+</div>
+
+<div class="faq-item">
+<strong>¿Cómo restauro mi compra en un nuevo dispositivo?</strong>
+<p>Abre ExposureLab en tu nuevo dispositivo, intenta guardar más de 5 preajustes y luego toca "Restaurar compra". Tu compra está vinculada a tu Apple ID.</p>
+</div>
+
+<h3>Preguntas Frecuentes</h3>
+<div class="faq-item"><strong>¿Cómo uso la Calculadora de Filtros ND?</strong><p>1) Ingresa tu velocidad de obturación base, 2) Toca "Agregar filtro" y selecciona filtros ND comunes, 3) Apila múltiples filtros agregando más, 4) Ve la nueva velocidad de obturación calculada instantáneamente, 5) Opcionalmente toca "Iniciar temporizador".</p></div>
+<div class="faq-item"><strong>¿Cómo guardo un preajuste?</strong><p>En cualquier herramienta de calculadora, configura tus ajustes y luego toca "Guardar como preajuste". Dale un nombre descriptivo. Los usuarios gratuitos pueden guardar hasta 5 preajustes; los usuarios Pro tienen preajustes ilimitados.</p></div>
+<div class="faq-item"><strong>¿Qué es el Modo Nocturno y cómo lo activo?</strong><p>El Modo Nocturno es una interfaz especial ultra-oscura con colores rojos/bajo-azul para preservar tu visión nocturna. Activa/desactiva el Modo Nocturno usando el ícono de luna en el encabezado de la pantalla de inicio.</p></div>
+<div class="faq-item"><strong>¿Cómo funciona el Conversor de Exposición?</strong><p>El Conversor de Exposición mantiene el mismo valor de exposición (EV) mientras cambia configuraciones. Configura apertura, velocidad de obturación e ISO. Luego ajusta cualquier valor - los otros se recalculan automáticamente para mantener la exposición equivalente.</p></div>
+<div class="faq-item"><strong>¿ExposureLab funciona sin conexión?</strong><p>¡Sí! ExposureLab funciona completamente sin conexión sin necesidad de Internet. Todos los cálculos ocurren en el dispositivo.</p></div>
+
+<h3>Requisitos del Sistema</h3>
+<ul><li>iOS 15.0 o posterior</li><li>iPhone o iPad</li><li>No requiere conexión a Internet</li></ul>
+</div>
+</div>
+
+<!-- PRIVACY POLICY SECTION -->
+<div class="section hidden" id="privacy">
+<!-- English Privacy Policy -->
+<div class="lang lang-en">
+<h2>Privacy Policy</h2>
+<p><strong>Effective Date:</strong> November 15, 2025</p>
+
+<h3>Overview</h3>
+<p>ExposureLab is committed to protecting your privacy. This Privacy Policy explains how we handle your information when you use our photography exposure calculator application.</p>
+
+<h3>Data Collection and Storage</h3>
+<p><strong>Local Storage Only:</strong> ExposureLab stores all your data locally on your device. We do NOT collect, transmit, or store any of your personal information on our servers or third-party servers.</p>
+
+<p>The following information is stored locally on your device:</p>
+<ul>
+<li>Saved presets (filter stacks, timer settings, exposure configurations)</li>
+<li>Film stock selections and custom reciprocity curves</li>
+<li>Astrophotography calculator settings (focal lengths, camera specs, K-factors)</li>
+<li>App preferences (Night Mode, haptic feedback, sound alerts)</li>
+<li>Usage history and favorite tools</li>
+<li>Any other data you enter into the app</li>
+</ul>
+
+<h3>In-App Purchases</h3>
+<p>ExposureLab offers an optional one-time purchase (ExposureLab Pro) processed through Apple's In-App Purchase system. We do not collect or store any payment information. All payment processing is handled securely by Apple. Your purchase is tied to your Apple ID and can be restored on any device signed in with the same Apple ID.</p>
+
+<h3>No Account Required</h3>
+<p>ExposureLab does not require you to create an account, provide an email address, or log in with any service. Your data remains completely private and under your control.</p>
+
+<h3>No Internet Connection Required</h3>
+<p>ExposureLab works completely offline and does not require an internet connection to function. The app does not communicate with any external servers or services, except when processing In-App Purchases through Apple's secure payment system.</p>
+
+<h3>Data Sharing</h3>
+<p>We do NOT share, sell, rent, or trade any of your information with third parties. Since all data is stored locally on your device, we have no access to your presets, settings, or personal information.</p>
+
+<h3>Data Export</h3>
+<p>You have complete control over your data. With ExposureLab Pro, you can export your presets and settings in a portable format at any time. When you export data, you control where the file is saved and who has access to it.</p>
+
+<h3>Analytics and Tracking</h3>
+<p>ExposureLab does NOT use any analytics services, tracking tools, or advertising networks. We do not collect usage statistics, crash reports, or any other information about how you use the app.</p>
+
+<h3>Third-Party Services</h3>
+<p>ExposureLab does not integrate with or use any third-party services, APIs, or SDKs that could access your data, with the exception of Apple's In-App Purchase system for processing Pro feature purchases.</p>
+
+<h3>Data Security</h3>
+<p>Since all data is stored locally on your device, the security of your data depends on your device's security measures (passcode, Face ID, Touch ID, etc.). We recommend keeping your device secure and regularly backing up your data using the Export feature (Pro).</p>
+
+<h3>Children's Privacy</h3>
+<p>ExposureLab does not knowingly collect any information from children. Since we don't collect any data, the app can be safely used by users of all ages.</p>
+
+<h3>Data Deletion</h3>
+<p>You can delete all your data at any time by deleting the app from your device. Uninstalling the app will permanently remove all your presets, settings, and configurations. Your In-App Purchase history remains tied to your Apple ID and can be restored if you reinstall the app.</p>
+
+<h3>iCloud Sync (Optional)</h3>
+<p>If you enable iCloud sync in your device settings, ExposureLab may store your presets in your personal iCloud account to sync across your devices. This is entirely optional and controlled by your device's iCloud settings. We do not have access to your iCloud data.</p>
+
+<h3>Contact Us</h3>
+<p>If you have any questions about this Privacy Policy, please contact us at:</p>
+<p>Email: <a href="mailto:bandurria.apps@gmail.com">bandurria.apps@gmail.com</a></p>
+
+<div class="note">
+<strong>Summary:</strong> ExposureLab is a privacy-first application. We don't collect, store, or transmit any of your personal information. All your presets, settings, and data stay on your device, completely private and secure. The only data transmission occurs during In-App Purchase processing, which is handled securely by Apple.
+</div>
+</div>
+
+<!-- German Privacy Policy -->
+<div class="lang lang-de hidden">
+<h2>Datenschutzerklärung</h2>
+<p><strong>Gültigkeitsdatum:</strong> 15. November 2025</p>
+
+<h3>Überblick</h3>
+<p>ExposureLab verpflichtet sich, Ihre Privatsphäre zu schützen. Diese Datenschutzerklärung erläutert, wie wir Ihre Daten verarbeiten.</p>
+
+<h3>Datenerfassung und Speicherung</h3>
+<p><strong>Nur lokale Speicherung:</strong> ExposureLab speichert alle Daten ausschließlich lokal auf Ihrem Gerät. Es erfolgt keinerlei Übertragung an Server oder Dritte.</p>
+
+<p>Die folgenden Informationen werden lokal auf Ihrem Gerät gespeichert:</p>
+<ul>
+<li>Gespeicherte Voreinstellungen (Filter-Stacks, Timer-Einstellungen, Belichtungskonfigurationen)</li>
+<li>Filmtyp-Auswahl und benutzerdefinierte Reziprozitätskurven</li>
+<li>Astrofotografie-Rechner-Einstellungen (Brennweiten, Kamera-Spezifikationen, K-Faktoren)</li>
+<li>App-Präferenzen (Nachtmodus, Haptik-Feedback, Klangalarme)</li>
+<li>Nutzungshistorie und bevorzugte Tools</li>
+<li>Alle anderen von Ihnen in die App eingegebenen Daten</li>
+</ul>
+
+<h3>In-App-Käufe</h3>
+<p>ExposureLab bietet einen optionalen einmaligen Kauf (ExposureLab Pro), der über Apples In-App-Kaufsystem abgewickelt wird. Wir erfassen oder speichern keine Zahlungsinformationen. Die gesamte Zahlungsabwicklung erfolgt sicher durch Apple.</p>
+
+<h3>Kein Konto erforderlich</h3>
+<p>ExposureLab verlangt keine Kontoerstellung oder Anmeldung. Ihre Daten bleiben vollständig privat und unter Ihrer Kontrolle.</p>
+
+<h3>Keine Internetverbindung erforderlich</h3>
+<p>Die App funktioniert vollständig offline, außer bei der Verarbeitung von In-App-Käufen über Apples sicheres Zahlungssystem.</p>
+
+<h3>Datenweitergabe</h3>
+<p>Wir verkaufen oder teilen keine Ihrer Informationen. Da alle Daten lokal gespeichert werden, haben wir keinen Zugriff darauf.</p>
+
+<h3>Datenexport</h3>
+<p>Mit ExposureLab Pro können Sie Ihre Voreinstellungen und Einstellungen jederzeit in einem tragbaren Format exportieren.</p>
+
+<h3>Analyse und Nachverfolgung</h3>
+<p>ExposureLab verwendet keinerlei Analyse- oder Tracking-Tools.</p>
+
+<h3>Drittdienste</h3>
+<p>Es werden keine Drittanbieter-APIs oder SDKs eingebunden, mit Ausnahme von Apples In-App-Kaufsystem.</p>
+
+<h3>iCloud-Synchronisierung (Optional)</h3>
+<p>Wenn Sie die iCloud-Synchronisierung in Ihren Geräteeinstellungen aktivieren, kann ExposureLab Ihre Voreinstellungen in Ihrem persönlichen iCloud-Konto speichern, um sie auf Ihren Geräten zu synchronisieren. Dies ist vollständig optional und wird von den iCloud-Einstellungen Ihres Geräts gesteuert. Wir haben keinen Zugriff auf Ihre iCloud-Daten.</p>
+
+<h3>Kontakt</h3>
+<p>E-Mail: <a href="mailto:bandurria.apps@gmail.com">bandurria.apps@gmail.com</a></p>
+
+<div class="note"><strong>Zusammenfassung:</strong> ExposureLab sammelt, speichert oder überträgt keine personenbezogenen Daten. Alle Informationen bleiben ausschließlich auf Ihrem Gerät. Die einzige Datenübertragung erfolgt während der In-App-Kaufabwicklung durch Apple.</div>
+</div>
+
+<!-- Spanish Privacy Policy -->
+<div class="lang lang-es hidden">
+<h2>Política de Privacidad</h2>
+<p><strong>Fecha de vigencia:</strong> 15 de noviembre de 2025</p>
+
+<h3>Resumen</h3>
+<p>ExposureLab se compromete a proteger tu privacidad. Esta Política de Privacidad explica cómo manejamos tu información.</p>
+
+<h3>Recopilación y almacenamiento de datos</h3>
+<p><strong>Solo almacenamiento local:</strong> ExposureLab almacena todos los datos únicamente en tu dispositivo. No se transmiten datos a servidores ni a terceros.</p>
+
+<p>La siguiente información se almacena localmente en tu dispositivo:</p>
+<ul>
+<li>Preajustes guardados (apilamientos de filtros, configuraciones de temporizador, configuraciones de exposición)</li>
+<li>Selecciones de tipo de película y curvas de reciprocidad personalizadas</li>
+<li>Configuraciones de la calculadora de astrofotografía (longitudes focales, especificaciones de cámara, factores K)</li>
+<li>Preferencias de la app (Modo Nocturno, retroalimentación háptica, alertas de sonido)</li>
+<li>Historial de uso y herramientas favoritas</li>
+<li>Cualquier otro dato que ingreses en la app</li>
+</ul>
+
+<h3>Compras dentro de la app</h3>
+<p>ExposureLab ofrece una compra única opcional (ExposureLab Pro) procesada a través del sistema de compras dentro de la app de Apple. No recopilamos ni almacenamos información de pago. Todo el procesamiento de pagos es manejado de forma segura por Apple.</p>
+
+<h3>No se requiere cuenta</h3>
+<p>No es necesario crear una cuenta ni iniciar sesión. Tus datos permanecen completamente privados.</p>
+
+<h3>No se requiere conexión a Internet</h3>
+<p>La aplicación funciona totalmente sin conexión, excepto durante el procesamiento de compras dentro de la app a través del sistema de pago seguro de Apple.</p>
+
+<h3>Compartición de datos</h3>
+<p>No compartimos, vendemos ni alquilamos tu información. Todos los datos permanecen locales en tu dispositivo.</p>
+
+<h3>Exportación de datos</h3>
+<p>Con ExposureLab Pro, puedes exportar tus preajustes y configuraciones en un formato portátil en cualquier momento.</p>
+
+<h3>Análisis y seguimiento</h3>
+<p>ExposureLab no utiliza ningún tipo de servicio de análisis ni herramientas de seguimiento.</p>
+
+<h3>Servicios de terceros</h3>
+<p>No se integran servicios de terceros, con excepción del sistema de compras dentro de la app de Apple.</p>
+
+<h3>Sincronización con iCloud (Opcional)</h3>
+<p>Si activas la sincronización con iCloud en la configuración de tu dispositivo, ExposureLab puede almacenar tus preajustes en tu cuenta personal de iCloud para sincronizar entre tus dispositivos. Esto es completamente opcional y controlado por la configuración de iCloud de tu dispositivo. No tenemos acceso a tus datos de iCloud.</p>
+
+<h3>Contacto</h3>
+<p>Email: <a href="mailto:bandurria.apps@gmail.com">bandurria.apps@gmail.com</a></p>
+
+<div class="note"><strong>Resumen:</strong> ExposureLab no recopila, almacena ni transmite ningún dato personal. Toda la información permanece únicamente en tu dispositivo. La única transmisión de datos ocurre durante el procesamiento de compras dentro de la app por parte de Apple.</div>
+</div>
+</div>
+</div>
+
+<footer>
+<p>© 2025 ExposureLab. Made with ❤️ for photographers by Andres Wetzel.</p>
+<p><a href="#home" onclick="showSection('home')">Home</a> | <a href="#support" onclick="showSection('support')">Support</a> | <a href="#privacy" onclick="showSection('privacy')">Privacy Policy</a></p>
+</footer>
+</body>
+</html>
